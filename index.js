@@ -6,8 +6,8 @@ const app = express();
 const port = 3032;
 
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'uploads')));
 
 app.get('/', (req, res) => {
@@ -24,32 +24,33 @@ app.get('/download', (req, res) => {
 
 app.post('/upload', async (req, res) => {
   try {
-    const identity = req.body.identity;
+    const id = req.body.id;
     const type = req.body.type;
     const series = req.body.series;
     const typefile = req.body.typefile;
+    const identity = req.body.identity;
     const fileData = Buffer.from(req.body.file, 'base64');
     const folderPath = path.join(__dirname, `uploads/${identity}`);
-    const destination = path.join(__dirname, `uploads/${identity}`, `${identity}-${type}-${series}.${typefile}`);
+    const destination = path.join(__dirname, `uploads/${identity}`,`${identity}-${type}-${series}-${id}.${typefile}`);
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath, { recursive: true })
     }
     fs.writeFileSync(destination, fileData);
     return res.json({
-      status: 200
+      status: 200,
+      message: 'Berhasil mengunggah berkas!'
     });
   } catch (error) {
     return res.status(500).json({ error: error });
   }
 });
 
-app.delete('/delete', async (req, res) => {
+app.delete('/delete/:identity/:filename', async (req, res) => {
   try {
-    const identity = req.body.identity;
-    const type = req.body.type;
-    const series = req.body.series;
-    const typefile = req.body.typefile;
-    const destination = path.join(__dirname, `uploads/${identity}`, `${identity}-${type}-${series}.${typefile}`);
+    console.log(req.params);
+    const identity = req.params.identity;
+    const filename = req.params.filename;
+    const destination = path.join(__dirname, `uploads/${identity}`, filename);
     fs.access(destination, fs.constants.F_OK, (err) => {
       if (err) {
         return res.status(404).json({ error: 'Berkas tidak ditemukan.' });

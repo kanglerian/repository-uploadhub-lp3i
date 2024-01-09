@@ -1,8 +1,0 @@
-POST http://localhost:3033/pmbupload
-{
-  "identity": "910684137",
-  "filename": "foto",
-  "filetype": "jpg",
-  "image": ""
-}
-
