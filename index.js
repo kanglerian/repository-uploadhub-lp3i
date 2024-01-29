@@ -45,6 +45,30 @@ app.post('/upload', async (req, res) => {
   }
 });
 
+app.post('/upload-bcbook', async (req, res) => {
+  try {
+    const id = req.body.id;
+    const type_id = req.body.type_id;
+    const judul = req.body.judul;
+    const pengarang = req.body.pengarang;
+    const typefile = req.body.typefile;
+    const jenis = req.body.jenis;
+    const fileData = Buffer.from(req.body.file, 'base64');
+    const folderPath = path.join(__dirname, `uploads/bc-ebook`);
+    const destination = path.join(__dirname, `uploads/bc-ebook`,`${judul}-${pengarang}-${type_id}-${jenis}-${id}.${typefile}`);
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true })
+    }
+    fs.writeFileSync(destination, fileData);
+    return res.json({
+      status: 200,
+      message: 'Berhasil mengunggah berkas!'
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error });
+  }
+});
+
 app.delete('/delete/:identity/:filename', async (req, res) => {
   try {
     console.log(req.params);
