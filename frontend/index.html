@@ -63,15 +63,15 @@
                             repositories.forEach((repository, index) => {
                                 let berkas = `${repository.file_name}-${repository.id}${repository.typefile}`;
                                 bucket += `
-            <tr>
-              <td>${index + 1}</td>
-              <td>${repository.series}</td>
-              <td>${repository.file_name}</td>
-              <td>
-                <a href="http://103.163.111.43:3031/download?identity=${identity}&filename=${berkas}">unduh</a>
-                <button onclick="deleteBerkas('${identity}','${repository.file_name}','${repository.id}','${repository.typefile}')">hapus</button>
-              </td>
-            </tr>`;
+                                  <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${repository.series}</td>
+                                    <td>${repository.file_name}</td>
+                                    <td>
+                                      <a href="http://localhost:3031/download?identity=${identity}&filename=${berkas}">unduh</a>
+                                      <button onclick="deleteBerkas('${identity}','${repository.file_name}','${repository.id}','${repository.typefile}')">hapus</button>
+                                    </td>
+                                  </tr>`;
                             });
                         } else {
                             bucket += `<tr><td colspan="4">Data tidak ada</td></tr>`;
@@ -90,7 +90,7 @@
                     if (konfirmasi) {
                         let berkas = `${filename}-${id}${typefile}`;
                         const responseBerkas = await axios.delete(
-                            `http://103.163.111.43:3031/delete/${identity}/${berkas}`,
+                            `http://localhost:3031/delete/${identity}/${berkas}`,
                         );
                         const responseDatabase = await axios.delete(
                             `http://localhost:3000/repositories/${id}`,
@@ -110,7 +110,6 @@
                 let type = document.getElementById("type").value;
                 let series = `${timestamp.getFullYear()}${timestamp.getMonth()}${timestamp.getDate()}${timestamp.getHours()}${timestamp.getMinutes()}`;
                 let file = document.getElementById("files");
-
                 if (file.files.length > 0) {
                     let konfirmasi = confirm(
                         `Apakah anda yakin akan mengunggah berkas ${file.files[0].name}`,
@@ -118,40 +117,38 @@
                     if (konfirmasi) {
                         const berkas = file.files[0];
                         const reader = new FileReader();
-
                         let data = {
                             series: series,
                             file_name: `${identity}-${type}-${series}`,
                             typefile: `.${berkas.name.split(".").pop()}`,
                         };
+                        // const responseDatabase = await axios.post(
+                        //     `http://localhost:3000/repositories`,
+                        //     data,
+                        // );
 
-                        const responseDatabase = await axios.post(
-                            `http://localhost:3000/repositories`,
-                            data,
-                        );
-
-                        if (responseDatabase.data.id) {
-                            reader.onload = async (event) => {
-                                let repository = {
-                                    identity: identity,
-                                    type: type,
-                                    series: series,
-                                    id: responseDatabase.data.id,
-                                    typefile: berkas.name.split(".").pop(),
-                                    file: event.target.result
-                                        .split(";base64,")
-                                        .pop(),
-                                };
-
-                                const responseUpload = await axios.post(
-                                    `http://103.163.111.43:3031/upload`,
-                                    repository,
-                                );
-                                console.log(responseUpload);
-                                // alert(responseUpload.data.message);
-                                // getRepositories();
+                        reader.onload = async (event) => {
+                            let repository = {
+                                identity: identity,
+                                type: type,
+                                series: series,
+                                id: 1,
+                                typefile: berkas.name.split(".").pop(),
+                                file: event.target.result
+                                    .split(";base64,")
+                                    .pop(),
                             };
-                        }
+
+                            const responseUpload = await axios.post(
+                                `http://localhost:3031/upload`,
+                                repository,
+                            );
+                            alert(responseUpload.data.message);
+                            getRepositories();
+                        };
+                        // if (responseDatabase.data.id) {
+
+                        // }
 
                         reader.readAsDataURL(berkas);
                     }
