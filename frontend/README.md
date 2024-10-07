@@ -1,3 +1,1 @@
-# Sample Front End
-
-Pisahkan folder ini dengan server.
+Install JSON Server untuk menjalankan `database.json` di port `3000`.

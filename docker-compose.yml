@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+  web:
+    container_name: uploadhub_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3031:3031"
+    restart: unless-stopped

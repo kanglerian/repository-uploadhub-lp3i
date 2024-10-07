@@ -1,57 +1,68 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Test Repository Upload HUB - Education LP3I 🇮🇩</title>
+        <style>
+            table,
+            tr,
+            td {
+                border: 1px solid black;
+                padding: 5px;
+            }
+        </style>
+    </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <style>
-    table,
-    tr,
-    td {
-      border: 1px solid black;
-      padding: 5px;
-    }
-  </style>
-</head>
+    <body>
+        <form
+            onsubmit="uploadBerkas(event)"
+            action="javascript:void(0)"
+            enctype="multipart/form-data"
+            method="POST"
+        >
+            <input
+                type="text"
+                id="identity"
+                value="201702102"
+                placeholder="ID"
+            /><br />
+            <select id="type">
+                <option value="tugasakhir">tugasakhir</option></select
+            ><br />
+            <input type="file" id="files" /><br />
+            <button type="submit">Upload</button>
+        </form>
 
-<body>
-  <form onsubmit="uploadBerkas(event)" action="javascript:void(0)" enctype="multipart/form-data" method="POST">
-    <input type="text" id="identity" value="201702102" placeholder="ID"><br />
-    <select id="type">
-      <option value="tugasakhir">tugasakhir</option>
-    </select><br />
-    <input type="file" id="files"><br />
-    <button type="submit">Upload</button>
-  </form>
-
-  <table style="margin-top: 20px;">
-    <thead>
-      <tr>
-        <td>No.</td>
-        <td>Series</td>
-        <td>Filename</td>
-        <td>Action</td>
-      </tr>
-    </thead>
-    <tbody id="results">
-      <tr>
-        <td colspan="4">Belum ada data</td>
-      </tr>
-    </tbody>
-  </table>
-  <script src="./axios.min.js"></script>
-  <script>
-    const getRepositories = async () => {
-      await axios.get(`http://localhost:3000/repositories`)
-        .then((response) => {
-          let identity = document.getElementById('identity').value;
-          let repositories = response.data;
-          let bucket = '';
-          if (repositories.length > 0) {
-            repositories.forEach((repository, index) => {
-              let berkas = `${repository.file_name}-${repository.id}${repository.typefile}`;
-              bucket += `
+        <table style="margin-top: 20px">
+            <thead>
+                <tr>
+                    <td>No.</td>
+                    <td>Series</td>
+                    <td>Filename</td>
+                    <td>Action</td>
+                </tr>
+            </thead>
+            <tbody id="results">
+                <tr>
+                    <td colspan="4">Belum ada data</td>
+                </tr>
+            </tbody>
+        </table>
+        <script src="./axios.min.js"></script>
+        <script>
+            const getRepositories = async () => {
+                await axios
+                    .get(`http://localhost:3000/repositories`)
+                    .then((response) => {
+                        let identity =
+                            document.getElementById("identity").value;
+                        let repositories = response.data;
+                        let bucket = "";
+                        if (repositories.length > 0) {
+                            repositories.forEach((repository, index) => {
+                                let berkas = `${repository.file_name}-${repository.id}${repository.typefile}`;
+                                bucket += `
             <tr>
               <td>${index + 1}</td>
               <td>${repository.series}</td>
@@ -60,77 +71,91 @@
                 <a href="http://localhost:3032/download?identity=${identity}&filename=${berkas}">unduh</a>
                 <button onclick="deleteBerkas('${identity}','${repository.file_name}','${repository.id}','${repository.typefile}')">hapus</button>
               </td>
-            </tr>`
-            });
-          } else {
-            bucket += `<tr><td colspan="4">Data tidak ada</td></tr>`
-          }
-          document.getElementById('results').innerHTML = bucket;
-        });
-    }
-    getRepositories();
-  </script>
-  <script>
-    const deleteBerkas = async (identity, filename, id, typefile) => {
-      try {
-        let konfirmasi = confirm(`Apakah anda yakin akan menghapus berkas ${filename}`);
-        if (konfirmasi) {
-          let berkas = `${filename}-${id}${typefile}`;
-          const responseBerkas = await axios.delete(`http://localhost:3032/delete/${identity}/${berkas}`)
-          const responseDatabase = await axios.delete(`http://localhost:3000/repositories/${id}`);
-          getRepositories();
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  </script>
-  <script>
-    const uploadBerkas = async (event) => {
-      event.preventDefault();
-      let timestamp = new Date();
-      let identity = document.getElementById('identity').value;
-      let type = document.getElementById('type').value;
-      let series = `${timestamp.getFullYear()}${timestamp.getMonth()}${timestamp.getDate()}${timestamp.getHours()}${timestamp.getMinutes()}`;
-      let file = document.getElementById('files');
+            </tr>`;
+                            });
+                        } else {
+                            bucket += `<tr><td colspan="4">Data tidak ada</td></tr>`;
+                        }
+                        document.getElementById("results").innerHTML = bucket;
+                    });
+            };
+            getRepositories();
+        </script>
+        <script>
+            const deleteBerkas = async (identity, filename, id, typefile) => {
+                try {
+                    let konfirmasi = confirm(
+                        `Apakah anda yakin akan menghapus berkas ${filename}`,
+                    );
+                    if (konfirmasi) {
+                        let berkas = `${filename}-${id}${typefile}`;
+                        const responseBerkas = await axios.delete(
+                            `http://localhost:3032/delete/${identity}/${berkas}`,
+                        );
+                        const responseDatabase = await axios.delete(
+                            `http://localhost:3000/repositories/${id}`,
+                        );
+                        getRepositories();
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            };
+        </script>
+        <script>
+            const uploadBerkas = async (event) => {
+                event.preventDefault();
+                let timestamp = new Date();
+                let identity = document.getElementById("identity").value;
+                let type = document.getElementById("type").value;
+                let series = `${timestamp.getFullYear()}${timestamp.getMonth()}${timestamp.getDate()}${timestamp.getHours()}${timestamp.getMinutes()}`;
+                let file = document.getElementById("files");
 
-      if (file.files.length > 0) {
-        let konfirmasi = confirm(`Apakah anda yakin akan mengunggah berkas ${file.files[0].name}`);
-        if (konfirmasi) {
-          const berkas = file.files[0];
-          const reader = new FileReader();
+                if (file.files.length > 0) {
+                    let konfirmasi = confirm(
+                        `Apakah anda yakin akan mengunggah berkas ${file.files[0].name}`,
+                    );
+                    if (konfirmasi) {
+                        const berkas = file.files[0];
+                        const reader = new FileReader();
 
-          let data = {
-            series: series,
-            file_name: `${identity}-${type}-${series}`,
-            typefile: `.${berkas.name.split('.').pop()}`,
-          }
+                        let data = {
+                            series: series,
+                            file_name: `${identity}-${type}-${series}`,
+                            typefile: `.${berkas.name.split(".").pop()}`,
+                        };
 
-          const responseDatabase = await axios.post(`http://localhost:3000/repositories`, data);
+                        const responseDatabase = await axios.post(
+                            `http://localhost:3000/repositories`,
+                            data,
+                        );
 
-          if (responseDatabase.data.id) {
+                        if (responseDatabase.data.id) {
+                            reader.onload = async (event) => {
+                                let repository = {
+                                    identity: identity,
+                                    type: type,
+                                    series: series,
+                                    id: responseDatabase.data.id,
+                                    typefile: berkas.name.split(".").pop(),
+                                    file: event.target.result
+                                        .split(";base64,")
+                                        .pop(),
+                                };
 
-            reader.onload = async (event) => {
-              let repository = {
-                identity: identity,
-                type: type,
-                series: series,
-                id: responseDatabase.data.id,
-                typefile: berkas.name.split('.').pop(),
-                file: event.target.result.split(';base64,').pop(),
-              };
+                                const responseUpload = await axios.post(
+                                    `http://localhost:3032/upload`,
+                                    repository,
+                                );
+                                alert(responseUpload.data.message);
+                                getRepositories();
+                            };
+                        }
 
-              const responseUpload = await axios.post(`http://localhost:3032/upload`, repository);
-              alert(responseUpload.data.message);
-              getRepositories();
-            }
-          }
-
-          reader.readAsDataURL(berkas);
-        }
-      }
-    };
-  </script>
-</body>
-
+                        reader.readAsDataURL(berkas);
+                    }
+                }
+            };
+        </script>
+    </body>
 </html>

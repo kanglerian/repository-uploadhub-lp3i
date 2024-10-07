@@ -1,20 +1,7 @@
-# Menggunakan image Node.js versi terbaru sebagai base image
-FROM node:latest
-
-# Buat direktori aplikasi di dalam container
+FROM node:18
 WORKDIR /app
-
-# Salin package.json dan package-lock.json ke direktori kerja
 COPY package*.json ./
-
-# Install dependensi aplikasi
 RUN npm install
-
-# Salin kode aplikasi ke direktori kerja
 COPY . .
-
-# Expose port 3032 untuk aplikasi
-EXPOSE 3032
-
-# Menjalankan aplikasi saat container dijalankan
+EXPOSE 3031
 CMD ["npm", "start"]
