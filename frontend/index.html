@@ -68,7 +68,7 @@
               <td>${repository.series}</td>
               <td>${repository.file_name}</td>
               <td>
-                <a href="http://localhost:3032/download?identity=${identity}&filename=${berkas}">unduh</a>
+                <a href="http://103.163.111.43:3031/download?identity=${identity}&filename=${berkas}">unduh</a>
                 <button onclick="deleteBerkas('${identity}','${repository.file_name}','${repository.id}','${repository.typefile}')">hapus</button>
               </td>
             </tr>`;
@@ -90,7 +90,7 @@
                     if (konfirmasi) {
                         let berkas = `${filename}-${id}${typefile}`;
                         const responseBerkas = await axios.delete(
-                            `http://localhost:3032/delete/${identity}/${berkas}`,
+                            `http://103.163.111.43:3031/delete/${identity}/${berkas}`,
                         );
                         const responseDatabase = await axios.delete(
                             `http://localhost:3000/repositories/${id}`,
@@ -144,11 +144,12 @@
                                 };
 
                                 const responseUpload = await axios.post(
-                                    `http://localhost:3032/upload`,
+                                    `http://103.163.111.43:3031/upload`,
                                     repository,
                                 );
-                                alert(responseUpload.data.message);
-                                getRepositories();
+                                console.log(responseUpload);
+                                // alert(responseUpload.data.message);
+                                // getRepositories();
                             };
                         }
 
