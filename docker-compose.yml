@@ -7,4 +7,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3031:3031"
+    volumes:
+      - /home/lerian/REPOSITORY:/app/uploads
     restart: unless-stopped
